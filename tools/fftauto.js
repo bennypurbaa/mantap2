@@ -111,15 +111,6 @@ const Target = async function(username){
 
 }
 
-async function ngefollow(session,accountId){
-  try {
-    await Client.Relationship.create(session, accountId);
-    return true
-  } catch (e) {
-    return false
-  }
-}
-
 async function ngeComment(session, id, text){
   try {
     await Client.Comment.create(session, id, text);
@@ -151,15 +142,13 @@ const CommentAndLike = async function(session, accountId, text){
 
   if (result.length > 0) {
     const task = [
-    ngefollow(session, accountId),
     ngeComment(session, result[0].params.id, text),
     ngeLike(session, result[0].params.id)
     ]
-    const [Follow,Comment,Like] = await Promise.all(task);
-    const printFollow = Follow ? chalk`{green Follow}` : chalk`{red Follow}`;
+    const [Comment,Like] = await Promise.all(task);
     const printComment = Comment ? chalk`{green Comment}` : chalk`{red Comment}`;
     const printLike = Like ? chalk`{green Like}` : chalk`{red Like}`;
-    return chalk`{bold.green ${printFollow}:${printComment}:${printLike} » {bold.cyan ${text}}}`;
+    return chalk`{bold.green ${printComment}:${printLike} » {bold.cyan ${text}}}`;
   }
   return chalk`{cyan {bold.red (SKIPPED)} TIMELINE EMPTY!}`
 };
@@ -191,7 +180,7 @@ const Excute = async function(User, TargetUsername, Text, Sleep, ittyw){
     const getTarget = await Target(TargetUsername);
     console.log(chalk`{green ✓ UserID ${TargetUsername}»${getTarget.id} ϟ Total Followers: [${getTarget.followers}]}`)
     const getFollowers = await Followers(doLogin.session, doLogin.account.id)
-    console.log(chalk`{cyan ? Try to Follow, Comment, and Like Followers Target . . . \n}`)
+    console.log(chalk`{cyan ? Try to Comment, and Like Followers Target . . . \n}`)
     const Targetfeed = new Client.Feed.AccountFollowers(doLogin.session, getTarget.id);
     var TargetCursor;
     console.log(chalk`{yellow ≡ READY TO START FFTAUTO WITH RATIO ${ittyw} TARGET/${Sleep} MiliSeconds\n}`)
@@ -223,7 +212,7 @@ const Excute = async function(User, TargetUsername, Text, Sleep, ittyw){
   }
 }
 console.log(chalk`{bold.cyan
-  Ξ TITLE  : FFT [FOLLOW-LIKE-COMMENT TARGET FOLLOWER]
+  Ξ TITLE  : FFT [LIKE-COMMENT TARGET FOLLOWER]
   Ξ CODE   : CYBER SCREAMER CCOCOT (ccocot@bc0de.net)
   Ξ STATUS : {bold.green [+ITTWY]} & {bold.yellow [TESTED]}}
       `);
