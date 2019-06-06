@@ -89,15 +89,6 @@ const grabFollowers = async (session, id) => {
   }
 }
 
-const doFollow = async (session, id) => {
-  try {
-    await Client.Relationship.create(session, id);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
-
 const doComment = async (session, id, text) => {
   try {
     await Client.Comment.create(session, id, text);
@@ -118,12 +109,10 @@ const doLike = async (session, id) => {
 
 const doAction = async (session, params, text) => {
   const task = [
-  doFollow(session, params.account.id),
   doLike(session, params.id),
   doComment(session, params.id, text)
   ];
-  var [Follow,Like,Comment] = await Promise.all(task);
-  Follow = Follow ? chalk`{bold.green SUKSES}` : chalk`{bold.red GAGAL}`;
+  var [Like,Comment] = await Promise.all(task);
   Comment = Comment ? chalk`{bold.green SUKSES}` : chalk`{bold.red GAGAL}`;
   Like = Like ? chalk`{bold.green SUKSES}` : chalk`{bold.red GAGAL}`;
   return chalk`[Follow: ${Follow}] [Like: ${Like}] [Comment: ${Comment} ({cyan ${text}})]`;
@@ -162,7 +151,7 @@ const doMain = async (account, hastag, sleep, text, ittyw) => {
   }
 }
 console.log(chalk`{bold.cyan
-  Ξ TITLE  : FAH [FOLLOW-LIKE-COMMENT TARGET HASTAG]
+  Ξ TITLE  : [LIKE-COMMENT TARGET HASTAG]
   Ξ CODE   : CYBER SCREAMER CCOCOT (ccocot@bc0de.net)
   Ξ STATUS : {bold.green [+ITTWY]} & {bold.yellow [TESTED]}}
       `);
